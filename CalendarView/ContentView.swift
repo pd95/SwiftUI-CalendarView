@@ -20,10 +20,6 @@ struct ContentView: View {
     @SceneStorage("maxWidth") private var maxWidth: Int = 350
     @SceneStorage("maxHeight") private var maxHeight: Int = 320
 
-    private var selectableRange: ClosedRange<Date> {
-        calendar.date(byAdding: .month, value: -2, to: .now)!...calendar.date(byAdding: .year, value: 1, to: .now)!
-    }
-
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
 
@@ -62,8 +58,32 @@ struct ContentView: View {
                 }
                 .labelStyle(.iconOnly)
 
-                DatePicker("Min. date", selection: $minDate, in: selectableRange, displayedComponents: .date)
-                DatePicker("Max. date", selection: $maxDate, in: selectableRange, displayedComponents: .date)
+                DatePicker("Min. date", selection: $minDate, in: Date.distantPast...maxDate, displayedComponents: .date)
+                    .disabled(minDate == .distantPast)
+                    .overlay(content: {
+                        if minDate == .distantPast {
+                            Color.clear
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    if maxDate == .distantFuture {
+                                        minDate = calendar.date(byAdding: .month, value: -2, to: .now) ?? date
+                                    }
+                                }
+                        }
+                    })
+                DatePicker("Max. date", selection: $maxDate, in: minDate...Date.distantFuture, displayedComponents: .date)
+                    .disabled(maxDate == .distantFuture)
+                    .overlay(content: {
+                        if maxDate == .distantFuture {
+                            Color.clear
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    if maxDate == .distantFuture {
+                                        maxDate = calendar.date(byAdding: .month, value: 2, to: .now) ?? date
+                                    }
+                                }
+                        }
+                    })
 
                 LabeledContent("Language") {
                     Button("System") {
