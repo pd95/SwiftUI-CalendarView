@@ -9,15 +9,22 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.calendar) private var calendar
+
+    // State variables used to test the `CalendarView` configuration
     @State private var minDate = Date.distantPast
     @State private var maxDate = Date.distantFuture
     @State private var date: Date = .now
     @State private var locale: Locale = .current
+
+    // State variables used to test the `CalendarView` layout behaviour
     @SceneStorage("maxWidth") private var maxWidth: Int = 350
     @SceneStorage("maxHeight") private var maxHeight: Int = 320
 
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
+
+            // The ScrollView and its content represent the "test environment" where the CalendarView
+            // going to layout its content.
             ScrollView(.vertical) {
                 CalendarView(
                     visibleDateComponents: calendar.dateComponents([.year, .month, .day], from: date),
@@ -31,6 +38,8 @@ struct ContentView: View {
             }
             .border(.purple)
 
+            // ---------------------------------------------------------------
+            // The following section allows adjusting the "Content" related behaviour of the `CalendarView`
             Section {
                 LabeledContent("Month") {
                     Button(action: {
@@ -74,6 +83,8 @@ struct ContentView: View {
 
             Divider()
 
+            // ---------------------------------------------------------------
+            // The following section allows adjusting the "Layout" related behaviour of the `CalendarView`
             Section {
                 HStack(spacing: 10) {
                     Stepper("Width") {
