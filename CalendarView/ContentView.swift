@@ -80,21 +80,23 @@ struct ContentView: View {
             Divider()
 
             Section {
-                HStack(spacing: 30) {
+                HStack(spacing: 10) {
                     Stepper("Width") {
                         maxWidth += 5
                     } onDecrement: {
                         maxWidth -= 5
                     }
                     TextField("Max. Width", value: $maxWidth, format: .number)
+                        .frame(maxWidth: 65)
                 }
-                HStack(spacing: 30) {
+                HStack(spacing: 10) {
                     Stepper("Height") {
                         maxHeight += 5
                     } onDecrement: {
                         maxHeight -= 5
                     }
                     TextField("Max Height", value: $maxHeight, format: .number)
+                        .frame(maxWidth: 65)
                 }
             } header: {
                 Text("Sizing")
