@@ -58,23 +58,19 @@ struct ContentView: View {
                     Button("System") {
                         locale = .current
                     }
-                    Menu {
-                        ForEach(["de", "fr", "it", "en", "es", "pt"], id: \.self) { languageCode in
-                            Button(action: {
-                                locale = Locale(identifier: languageCode)
-                            }) {
-                                if let currentLanguage = locale.language.languageCode?.identifier,
-                                    currentLanguage == languageCode {
-                                    Image(systemName: "checkmark")
-                                }
-                                Text(Locale.Language(identifier: languageCode).minimalIdentifier)
-                            }
+
+                    LanguageChooser(
+                        supportedLanguages: ["de", "fr", "it", "en", "es", "pt"],
+                        selectedLanguage:
+                        Binding(get: { locale.language.languageCode ?? Locale.LanguageCode("en")},
+                                set: { languageCode in locale = Locale(identifier: languageCode.identifier) }
+                               ),
+                        label: {
+                            Label("Other", systemImage: "ellipsis")
+                                .labelStyle(.iconOnly)
+                                .frame(minHeight: 20)
                         }
-                    } label: {
-                        Label("Other", systemImage: "ellipsis")
-                            .labelStyle(.iconOnly)
-                            .frame(minHeight: 20)
-                    }
+                    )
                 }
             } header: {
                 Text("Content")

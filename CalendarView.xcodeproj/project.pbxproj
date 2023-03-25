@@ -12,6 +12,7 @@
 		1730B3DC29CDF7CF00D2FEC6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1730B3DB29CDF7CF00D2FEC6 /* Assets.xcassets */; };
 		1730B3DF29CDF7CF00D2FEC6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1730B3DE29CDF7CF00D2FEC6 /* Preview Assets.xcassets */; };
 		1730B3E829CEE8E000D2FEC6 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1730B3E729CEE8E000D2FEC6 /* CalendarView.swift */; };
+		17B21CB529CF27AD00909237 /* LanguageChooser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B21CB429CF27AD00909237 /* LanguageChooser.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		1730B3DB29CDF7CF00D2FEC6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1730B3DE29CDF7CF00D2FEC6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1730B3E729CEE8E000D2FEC6 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		17B21CB429CF27AD00909237 /* LanguageChooser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageChooser.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 				1730B3D729CDF7CE00D2FEC6 /* CalendarViewApp.swift */,
 				1730B3D929CDF7CE00D2FEC6 /* ContentView.swift */,
 				1730B3E729CEE8E000D2FEC6 /* CalendarView.swift */,
+				17B21CB429CF27AD00909237 /* LanguageChooser.swift */,
 				1730B3DB29CDF7CF00D2FEC6 /* Assets.xcassets */,
 				1730B3DD29CDF7CF00D2FEC6 /* Preview Content */,
 			);
@@ -143,6 +146,7 @@
 				1730B3DA29CDF7CE00D2FEC6 /* ContentView.swift in Sources */,
 				1730B3D829CDF7CE00D2FEC6 /* CalendarViewApp.swift in Sources */,
 				1730B3E829CEE8E000D2FEC6 /* CalendarView.swift in Sources */,
+				17B21CB529CF27AD00909237 /* LanguageChooser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
