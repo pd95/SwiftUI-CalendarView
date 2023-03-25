@@ -21,6 +21,7 @@ struct ContentView: View {
     // State variables used to test the `CalendarView` layout behaviour
     @SceneStorage("maxWidth") private var maxWidth: Int = 350
     @SceneStorage("maxHeight") private var maxHeight: Int = 320
+    @SceneStorage("fontDesign") private var fontDesign: UIFontDescriptor.SystemDesign = .default
 
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
@@ -30,7 +31,8 @@ struct ContentView: View {
             ScrollView(.vertical) {
                 CalendarView(
                     visibleDate: date,
-                    availableDateRange: minDate...maxDate
+                    availableDateRange: minDate...maxDate,
+                    fontDesign: fontDesign
                 )
                 .environment(\.locale, locale)
                 .border(.yellow)
@@ -130,8 +132,26 @@ struct ContentView: View {
                         Divider()
 
                         // ---------------------------------------------------------------
-                        // The following section allows adjusting the "Layout" related behaviour of the `CalendarView`
+                        // The following section allows adjusting the "Appearance" related behaviour of the `CalendarView`
                         Section {
+                            HStack {
+                                Text("Appearance")
+                                    .font(.headline)
+                                Spacer()
+                                Menu {
+                                    let designs: [UIFontDescriptor.SystemDesign] = [.default, .rounded, .monospaced, .serif]
+                                    ForEach(designs, id: \.rawValue) { design in
+                                        let title = design.rawValue.replacing(/^NSCTFontUIFontDesign/, with: "")
+                                        Button(title) {
+                                            fontDesign = design
+                                        }
+                                    }
+                                } label: {
+                                    Text("Font Design")
+                                }
+                                .buttonStyle(.borderless)
+                            }
+
                             HStack(spacing: 10) {
                                 Stepper("Width") {
                                     maxWidth += 5
@@ -150,9 +170,6 @@ struct ContentView: View {
                                 TextField("Max Height", value: $maxHeight, format: .number)
                                     .frame(maxWidth: 65)
                             }
-                        } header: {
-                            Text("Sizing")
-                                .font(.headline)
                         }
                     }
                     .padding()

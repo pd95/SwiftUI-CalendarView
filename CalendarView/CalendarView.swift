@@ -13,11 +13,14 @@ struct CalendarView: UIViewRepresentable {
 
     var visibleDate: Date? = nil
     var availableDateRange: ClosedRange<Date>? = nil
+    var fontDesign: UIFontDescriptor.SystemDesign = .default
 
     func makeUIView(context: Context) -> UIView {
         let calendarView = UICalendarView(frame: .zero)
         calendarView.calendar = calendar
         calendarView.locale = locale
+        calendarView.fontDesign = fontDesign
+
         if let visibleDate {
             let dateComponents = calendar.dateComponents([.year, .month, .day], from: visibleDate)
             calendarView.visibleDateComponents = dateComponents
@@ -58,15 +61,14 @@ struct CalendarView: UIViewRepresentable {
         if calendarView.locale != locale {
             calendarView.locale = locale
         }
-
-        print("uiView", uiView.frame)
-        print("calendarView", calendarView.frame)
-        print("intrinsicContentSize", calendarView.intrinsicContentSize)
+        if calendarView.fontDesign != fontDesign {
+            calendarView.fontDesign = fontDesign
+        }
     }
 }
 
 struct CalendarView_Previews: PreviewProvider {
     static var previews: some View {
-        CalendarView()
+        CalendarView(fontDesign: .rounded)
     }
 }
