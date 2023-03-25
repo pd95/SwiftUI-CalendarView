@@ -43,12 +43,17 @@ struct CalendarView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: Context) {
         guard let calendarView = uiView.subviews.first as? UICalendarView else { return }
 
-        if let visibleDateComponents {
-            calendarView.visibleDateComponents = visibleDateComponents
-        }
         if let availableDateRange {
             calendarView.availableDateRange = availableDateRange
         }
+
+        if let visibleDateComponents,
+           let date = calendarView.calendar.date(from: visibleDateComponents),
+           calendarView.availableDateRange.contains(date)
+        {
+            calendarView.visibleDateComponents = visibleDateComponents
+        }
+
         if calendarView.locale != locale {
             calendarView.locale = locale
         }
