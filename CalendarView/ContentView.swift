@@ -29,8 +29,8 @@ struct ContentView: View {
             // going to layout its content.
             ScrollView(.vertical) {
                 CalendarView(
-                    visibleDateComponents: calendar.dateComponents([.year, .month, .day], from: date),
-                    availableDateRange: DateInterval(start: minDate, end: maxDate)
+                    visibleDate: date,
+                    availableDateRange: minDate...maxDate
                 )
                 .environment(\.locale, locale)
                 .border(.yellow)

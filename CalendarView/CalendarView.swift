@@ -11,18 +11,20 @@ struct CalendarView: UIViewRepresentable {
     @Environment(\.calendar) private var calendar
     @Environment(\.locale) private var locale
 
-    var visibleDateComponents: DateComponents? = nil
-    var availableDateRange: DateInterval? = nil
+    var visibleDate: Date? = nil
+    var availableDateRange: ClosedRange<Date>? = nil
 
     func makeUIView(context: Context) -> UIView {
         let calendarView = UICalendarView(frame: .zero)
         calendarView.calendar = calendar
         calendarView.locale = locale
-        if let visibleDateComponents {
-            calendarView.visibleDateComponents = visibleDateComponents
+        if let visibleDate {
+            let dateComponents = calendar.dateComponents([.year, .month, .day], from: visibleDate)
+            calendarView.visibleDateComponents = dateComponents
         }
         if let availableDateRange {
-            calendarView.availableDateRange = availableDateRange
+            let dateInterval = DateInterval(start: availableDateRange.lowerBound, end: availableDateRange.upperBound)
+            calendarView.availableDateRange = dateInterval
         }
 
         let rootView = UIView()
@@ -44,14 +46,13 @@ struct CalendarView: UIViewRepresentable {
         guard let calendarView = uiView.subviews.first as? UICalendarView else { return }
 
         if let availableDateRange {
-            calendarView.availableDateRange = availableDateRange
+            let dateInterval = DateInterval(start: availableDateRange.lowerBound, end: availableDateRange.upperBound)
+            calendarView.availableDateRange = dateInterval
         }
 
-        if let visibleDateComponents,
-           let date = calendarView.calendar.date(from: visibleDateComponents),
-           calendarView.availableDateRange.contains(date)
-        {
-            calendarView.visibleDateComponents = visibleDateComponents
+        if let visibleDate, calendarView.availableDateRange.contains(visibleDate) {
+            let dateComponents = calendar.dateComponents([.year, .month, .day], from: visibleDate)
+            calendarView.visibleDateComponents = dateComponents
         }
 
         if calendarView.locale != locale {
