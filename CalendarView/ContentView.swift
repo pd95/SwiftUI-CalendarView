@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var date: Date?
     @SceneStorage("maxWidth") private var maxWidth: Int = 350
     @SceneStorage("maxHeight") private var maxHeight: Int = 320
+    @State private var locale: Locale = .current
 
     var dateComponents: DateComponents? {
         guard let date else { return nil }
@@ -27,6 +28,7 @@ struct ContentView: View {
                     visibleDateComponents: dateComponents,
                     availableDateRange: DateInterval(start: minDate, end: maxDate)
                 )
+                .environment(\.locale, locale)
                 .border(.yellow)
                 //.frame(minWidth: 100, minHeight: 100)
                 .aspectRatio(contentMode: .fit)
@@ -51,7 +53,30 @@ struct ContentView: View {
                         date = calendar.date(byAdding: .month, value: 1, to: date ?? .now)
                     }
                 }
-                .buttonStyle(.bordered)
+                Divider()
+                HStack(spacing: 30) {
+                    Text("Language")
+                    Button("Current") {
+                        locale = .current
+                    }
+                    Menu {
+                        ForEach(["de", "fr", "it", "en", "es", "pt"], id: \.self) { languageCode in
+                            Button(action: {
+                                locale = Locale(identifier: languageCode)
+                            }) {
+                                if let currentLanguage = locale.language.languageCode?.identifier,
+                                    currentLanguage == languageCode {
+                                    Image(systemName: "checkmark")
+                                }
+                                Text(Locale.Language(identifier: languageCode).minimalIdentifier)
+                            }
+                        }
+                    } label: {
+                        Label("Other", systemImage: "ellipsis")
+                            .labelStyle(.iconOnly)
+                            .frame(minHeight: 20)
+                    }
+                }
             } header: {
                 Text("Content")
                     .font(.headline)
@@ -79,8 +104,9 @@ struct ContentView: View {
                 Text("Sizing")
                     .font(.headline)
             }
-            .textFieldStyle(.roundedBorder)
         }
+        .buttonStyle(.bordered)
+        .textFieldStyle(.roundedBorder)
         .padding()
     }
 }

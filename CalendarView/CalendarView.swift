@@ -49,6 +49,9 @@ struct CalendarView: UIViewRepresentable {
         if let availableDateRange {
             calendarView.availableDateRange = availableDateRange
         }
+        if calendarView.locale != locale {
+            calendarView.locale = locale
+        }
 
         print("uiView", uiView.frame)
         print("calendarView", calendarView.frame)
