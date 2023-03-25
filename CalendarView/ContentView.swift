@@ -20,6 +20,10 @@ struct ContentView: View {
     @SceneStorage("maxWidth") private var maxWidth: Int = 350
     @SceneStorage("maxHeight") private var maxHeight: Int = 320
 
+    private var selectableRange: ClosedRange<Date> {
+        calendar.date(byAdding: .month, value: -2, to: .now)!...calendar.date(byAdding: .year, value: 1, to: .now)!
+    }
+
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
 
@@ -57,6 +61,9 @@ struct ContentView: View {
                     })
                 }
                 .labelStyle(.iconOnly)
+
+                DatePicker("Min. date", selection: $minDate, in: selectableRange, displayedComponents: .date)
+                DatePicker("Max. date", selection: $maxDate, in: selectableRange, displayedComponents: .date)
 
                 LabeledContent("Language") {
                     Button("System") {
