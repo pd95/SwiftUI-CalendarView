@@ -40,8 +40,7 @@ struct ContentView: View {
                         let dateComponents = calendar.dateComponents([.weekday], from: date)
                         return allowedWeekDays.contains(dateComponents)
                     },
-                    selectedDate: {
-                        print("\($0) selected")
+                    selectDate: {
                         selectedDate = $0
                     }
                 )

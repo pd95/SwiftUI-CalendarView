@@ -16,7 +16,7 @@ struct CalendarView: UIViewRepresentable {
     var fontDesign: UIFontDescriptor.SystemDesign = .default
 
     var canSelectDate: ((Date) -> Bool)?
-    var selectedDate: ((Date) -> Void)?
+    var selectDate: ((Date?) -> Void)?
 
     func makeUIView(context: Context) -> UIView {
         let calendarView = UICalendarView(frame: .zero)
@@ -33,7 +33,7 @@ struct CalendarView: UIViewRepresentable {
             calendarView.availableDateRange = dateInterval
         }
 
-        if selectedDate != nil {
+        if selectDate != nil {
             calendarView.selectionBehavior = UICalendarSelectionSingleDate(delegate: context.coordinator)
         }
 
@@ -85,15 +85,19 @@ struct CalendarView: UIViewRepresentable {
         }
 
         func dateSelection(_ selection: UICalendarSelectionSingleDate, canSelectDate dateComponents: DateComponents?) -> Bool {
+            guard let canSelectDate = parent.canSelectDate else { return true }
             if let dateComponents, let selectedDate = parent.calendar.date(from: dateComponents) {
-                return parent.canSelectDate?(selectedDate) ?? true
+                return canSelectDate(selectedDate)
             }
             return true
         }
 
         func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+            guard let selectDate = parent.selectDate else { return }
             if let dateComponents, let selectedDate = parent.calendar.date(from: dateComponents) {
-                parent.selectedDate?(selectedDate)
+                selectDate(selectedDate)
+            } else {
+                selectDate(nil)
             }
         }
     }
