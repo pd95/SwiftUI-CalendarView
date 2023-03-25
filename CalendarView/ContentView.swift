@@ -10,6 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.calendar) private var calendar
 
+    @State private var showConfigurationSheet = false
+
     // State variables used to test the `CalendarView` configuration
     @State private var minDate = Date.distantPast
     @State private var maxDate = Date.distantFuture
@@ -35,110 +37,131 @@ struct ContentView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: CGFloat(maxWidth), maxHeight: CGFloat(maxHeight))
                 .border(.red)
+
+                Button(action: { showConfigurationSheet.toggle() }) {
+                    Label("Configuration", systemImage: "gear")
+                }
+
+                VStack(alignment: .leading) {
+                    Text("Border colors")
+                        .font(.headline)
+                    Text("ScrollView").foregroundColor(.purple)
+                    Text("CalendarView").foregroundColor(.yellow)
+                    Text("maxed frame").foregroundColor(.red)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .border(.purple)
+            .sheet(isPresented: $showConfigurationSheet) {
+                ScrollView {
+                    VStack(alignment: .leading) {
 
-            // ---------------------------------------------------------------
-            // The following section allows adjusting the "Content" related behaviour of the `CalendarView`
-            Section {
-                LabeledContent("Month") {
-                    Button(action: {
-                        date = calendar.date(byAdding: .month, value: -1, to: date) ?? date
-                    }, label: {
-                        Label("Previous", systemImage: "chevron.backward.2")
-                    })
-                    Button("Current") {
-                        date = .now
-                    }
-                    Button(action: {
-                        date = calendar.date(byAdding: .month, value: 1, to: date) ?? date
-                    }, label: {
-                        Label("Next", systemImage: "chevron.forward.2")
-                    })
-                }
-                .labelStyle(.iconOnly)
+                        // ---------------------------------------------------------------
+                        // The following section allows adjusting the "Content" related behaviour of the `CalendarView`
+                        Section {
+                            LabeledContent("Visible month") {
+                                Button(action: {
+                                    date = calendar.date(byAdding: .month, value: -1, to: date) ?? date
+                                }, label: {
+                                    Label("Previous", systemImage: "chevron.backward.2")
+                                })
+                                Button("Today") {
+                                    date = .now
+                                }
+                                Button(action: {
+                                    date = calendar.date(byAdding: .month, value: 1, to: date) ?? date
+                                }, label: {
+                                    Label("Next", systemImage: "chevron.forward.2")
+                                })
+                            }
+                            .labelStyle(.iconOnly)
 
-                DatePicker("Min. date", selection: $minDate, in: Date.distantPast...maxDate, displayedComponents: .date)
-                    .disabled(minDate == .distantPast)
-                    .overlay(content: {
-                        if minDate == .distantPast {
-                            Color.clear
-                                .contentShape(Rectangle())
-                                .onTapGesture {
+                            DatePicker("Min. date", selection: $minDate, in: Date.distantPast...maxDate, displayedComponents: .date)
+                                .disabled(minDate == .distantPast)
+                                .overlay(content: {
                                     if minDate == .distantPast {
-                                        minDate = calendar.date(byAdding: .month, value: -2, to: .now) ?? date
+                                        Color.clear
+                                            .contentShape(Rectangle())
+                                            .onTapGesture {
+                                                if minDate == .distantPast {
+                                                    minDate = calendar.date(byAdding: .month, value: -2, to: .now) ?? date
+                                                }
+                                            }
                                     }
-                                }
-                        }
-                    })
-                DatePicker("Max. date", selection: $maxDate, in: minDate...Date.distantFuture, displayedComponents: .date)
-                    .disabled(maxDate == .distantFuture)
-                    .overlay(content: {
-                        if maxDate == .distantFuture {
-                            Color.clear
-                                .contentShape(Rectangle())
-                                .onTapGesture {
+                                })
+                            DatePicker("Max. date", selection: $maxDate, in: minDate...Date.distantFuture, displayedComponents: .date)
+                                .disabled(maxDate == .distantFuture)
+                                .overlay(content: {
                                     if maxDate == .distantFuture {
-                                        maxDate = calendar.date(byAdding: .month, value: 2, to: .now) ?? date
+                                        Color.clear
+                                            .contentShape(Rectangle())
+                                            .onTapGesture {
+                                                if maxDate == .distantFuture {
+                                                    maxDate = calendar.date(byAdding: .month, value: 2, to: .now) ?? date
+                                                }
+                                            }
                                     }
+                                })
+
+                            LabeledContent("Language") {
+                                Button("System") {
+                                    locale = .current
                                 }
+
+                                LanguageChooser(
+                                    supportedLanguages: ["de", "fr", "it", "en", "es", "pt"],
+                                    selectedLanguage:
+                                        Binding(get: { locale.language.languageCode ?? Locale.LanguageCode("en")},
+                                                set: { languageCode in locale = Locale(identifier: languageCode.identifier) }
+                                               ),
+                                    label: {
+                                        Label("Other", systemImage: "ellipsis")
+                                            .labelStyle(.iconOnly)
+                                            .frame(minHeight: 20)
+                                    }
+                                )
+                            }
+                        } header: {
+                            Text("Content")
+                                .font(.headline)
                         }
-                    })
 
-                LabeledContent("Language") {
-                    Button("System") {
-                        locale = .current
-                    }
+                        Divider()
 
-                    LanguageChooser(
-                        supportedLanguages: ["de", "fr", "it", "en", "es", "pt"],
-                        selectedLanguage:
-                        Binding(get: { locale.language.languageCode ?? Locale.LanguageCode("en")},
-                                set: { languageCode in locale = Locale(identifier: languageCode.identifier) }
-                               ),
-                        label: {
-                            Label("Other", systemImage: "ellipsis")
-                                .labelStyle(.iconOnly)
-                                .frame(minHeight: 20)
+                        // ---------------------------------------------------------------
+                        // The following section allows adjusting the "Layout" related behaviour of the `CalendarView`
+                        Section {
+                            HStack(spacing: 10) {
+                                Stepper("Width") {
+                                    maxWidth += 5
+                                } onDecrement: {
+                                    maxWidth -= 5
+                                }
+                                TextField("Max. Width", value: $maxWidth, format: .number)
+                                    .frame(maxWidth: 65)
+                            }
+                            HStack(spacing: 10) {
+                                Stepper("Height") {
+                                    maxHeight += 5
+                                } onDecrement: {
+                                    maxHeight -= 5
+                                }
+                                TextField("Max Height", value: $maxHeight, format: .number)
+                                    .frame(maxWidth: 65)
+                            }
+                        } header: {
+                            Text("Sizing")
+                                .font(.headline)
                         }
-                    )
-                }
-            } header: {
-                Text("Content")
-                    .font(.headline)
-            }
-
-            Divider()
-
-            // ---------------------------------------------------------------
-            // The following section allows adjusting the "Layout" related behaviour of the `CalendarView`
-            Section {
-                HStack(spacing: 10) {
-                    Stepper("Width") {
-                        maxWidth += 5
-                    } onDecrement: {
-                        maxWidth -= 5
                     }
-                    TextField("Max. Width", value: $maxWidth, format: .number)
-                        .frame(maxWidth: 65)
+                    .padding()
+                    .buttonStyle(.bordered)
+                    .textFieldStyle(.roundedBorder)
                 }
-                HStack(spacing: 10) {
-                    Stepper("Height") {
-                        maxHeight += 5
-                    } onDecrement: {
-                        maxHeight -= 5
-                    }
-                    TextField("Max Height", value: $maxHeight, format: .number)
-                        .frame(maxWidth: 65)
-                }
-            } header: {
-                Text("Sizing")
-                    .font(.headline)
+                .presentationDetents([.medium, .large, .fraction(0.45)])
             }
         }
-        .buttonStyle(.bordered)
-        .textFieldStyle(.roundedBorder)
-        .padding()
     }
 }
 
