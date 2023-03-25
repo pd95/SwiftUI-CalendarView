@@ -30,12 +30,8 @@ struct ContentView: View {
                 )
                 .environment(\.locale, locale)
                 .border(.yellow)
-                //.frame(minWidth: 100, minHeight: 100)
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: CGFloat(maxWidth), maxHeight: CGFloat(maxHeight))
-                //.fixedSize(horizontal: false, vertical: true)
-                //.frame(maxWidth: 300, maxHeight: 400)
-                //.frame(minWidth: 220, maxWidth: 300, minHeight: 267, maxHeight: 300)
                 .border(.red)
             }
             .border(.purple)
