@@ -43,20 +43,27 @@ struct ContentView: View {
             Section {
                 HStack(spacing: 30) {
                     Text("Month")
-                    Button("<<") {
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Button(action: {
                         date = calendar.date(byAdding: .month, value: -1, to: date ?? .now)
-                    }
+                    }, label: {
+                        Label("Previous", systemImage: "chevron.backward.2")
+                    })
                     Button("Current") {
                         date = .now
                     }
-                    Button(">>") {
+                    Button(action: {
                         date = calendar.date(byAdding: .month, value: 1, to: date ?? .now)
-                    }
+                    }, label: {
+                        Label("Next", systemImage: "chevron.forward.2")
+                    })
                 }
-                Divider()
+                .labelStyle(.iconOnly)
+
                 HStack(spacing: 30) {
                     Text("Language")
-                    Button("Current") {
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Button("System") {
                         locale = .current
                     }
                     Menu {
@@ -82,7 +89,8 @@ struct ContentView: View {
                     .font(.headline)
             }
 
-            Spacer()
+            Divider()
+
             Section {
                 HStack(spacing: 30) {
                     Stepper("Width") {
