@@ -23,6 +23,7 @@
 		1730B3DE29CDF7CF00D2FEC6 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1730B3E729CEE8E000D2FEC6 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		17B21CB429CF27AD00909237 /* LanguageChooser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageChooser.swift; sourceTree = "<group>"; };
+		17B21CB629CF31DF00909237 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,6 +40,7 @@
 		1730B3CB29CDF7CE00D2FEC6 = {
 			isa = PBXGroup;
 			children = (
+				17B21CB629CF31DF00909237 /* README.md */,
 				1730B3D629CDF7CE00D2FEC6 /* CalendarView */,
 				1730B3D529CDF7CE00D2FEC6 /* Products */,
 			);
