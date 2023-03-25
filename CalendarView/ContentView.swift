@@ -65,7 +65,7 @@ struct ContentView: View {
                             Color.clear
                                 .contentShape(Rectangle())
                                 .onTapGesture {
-                                    if maxDate == .distantFuture {
+                                    if minDate == .distantPast {
                                         minDate = calendar.date(byAdding: .month, value: -2, to: .now) ?? date
                                     }
                                 }
