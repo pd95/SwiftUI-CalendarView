@@ -16,7 +16,9 @@ struct ContentView: View {
     @State private var minDate = Date.distantPast
     @State private var maxDate = Date.distantFuture
     @State private var date: Date = .now
+    @State private var selectedDate: Date?
     @State private var locale: Locale = .current
+    @State private var allowedWeekDays: [DateComponents] = (2...6).map({ DateComponents(weekday: $0) })
 
     // State variables used to test the `CalendarView` layout behaviour
     @SceneStorage("maxWidth") private var maxWidth: Int = 350
@@ -32,13 +34,26 @@ struct ContentView: View {
                 CalendarView(
                     visibleDate: date,
                     availableDateRange: minDate...maxDate,
-                    fontDesign: fontDesign
+                    fontDesign: fontDesign,
+                    canSelectDate: { date in
+                        // Get weekday from date and check against allowed weekdays
+                        let dateComponents = calendar.dateComponents([.weekday], from: date)
+                        return allowedWeekDays.contains(dateComponents)
+                    },
+                    selectedDate: {
+                        print("\($0) selected")
+                        selectedDate = $0
+                    }
                 )
                 .environment(\.locale, locale)
                 .border(.yellow)
                 .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: CGFloat(maxWidth), maxHeight: CGFloat(maxHeight))
                 .border(.red)
+
+                Text(selectedDate == nil ? "Please select a date." : "\(selectedDate!, style: .date) selected")
+                    .font(.title3.bold())
+                    .padding()
 
                 Button(action: { showConfigurationSheet.toggle() }) {
                     Label("Configuration", systemImage: "gear")

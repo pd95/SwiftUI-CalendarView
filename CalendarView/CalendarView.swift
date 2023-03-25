@@ -15,6 +15,9 @@ struct CalendarView: UIViewRepresentable {
     var availableDateRange: ClosedRange<Date>? = nil
     var fontDesign: UIFontDescriptor.SystemDesign = .default
 
+    var canSelectDate: ((Date) -> Bool)?
+    var selectedDate: ((Date) -> Void)?
+
     func makeUIView(context: Context) -> UIView {
         let calendarView = UICalendarView(frame: .zero)
         calendarView.calendar = calendar
@@ -28,6 +31,10 @@ struct CalendarView: UIViewRepresentable {
         if let availableDateRange {
             let dateInterval = DateInterval(start: availableDateRange.lowerBound, end: availableDateRange.upperBound)
             calendarView.availableDateRange = dateInterval
+        }
+
+        if selectedDate != nil {
+            calendarView.selectionBehavior = UICalendarSelectionSingleDate(delegate: context.coordinator)
         }
 
         let rootView = UIView()
@@ -63,6 +70,31 @@ struct CalendarView: UIViewRepresentable {
         }
         if calendarView.fontDesign != fontDesign {
             calendarView.fontDesign = fontDesign
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UICalendarSelectionSingleDateDelegate {
+        let parent: CalendarView
+
+        init(_ parent: CalendarView) {
+            self.parent = parent
+        }
+
+        func dateSelection(_ selection: UICalendarSelectionSingleDate, canSelectDate dateComponents: DateComponents?) -> Bool {
+            if let dateComponents, let selectedDate = parent.calendar.date(from: dateComponents) {
+                return parent.canSelectDate?(selectedDate) ?? true
+            }
+            return true
+        }
+
+        func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+            if let dateComponents, let selectedDate = parent.calendar.date(from: dateComponents) {
+                parent.selectedDate?(selectedDate)
+            }
         }
     }
 }
