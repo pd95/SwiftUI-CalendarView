@@ -37,9 +37,7 @@ struct ContentView: View {
             .border(.purple)
 
             Section {
-                HStack(spacing: 30) {
-                    Text("Month")
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                LabeledContent("Month") {
                     Button(action: {
                         date = calendar.date(byAdding: .month, value: -1, to: date ?? .now)
                     }, label: {
@@ -56,9 +54,7 @@ struct ContentView: View {
                 }
                 .labelStyle(.iconOnly)
 
-                HStack(spacing: 30) {
-                    Text("Language")
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                LabeledContent("Language") {
                     Button("System") {
                         locale = .current
                     }
