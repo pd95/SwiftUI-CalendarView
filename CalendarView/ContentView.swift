@@ -54,7 +54,6 @@ struct ContentView: View {
                 )
                 .environment(\.locale, locale)
                 .border(.yellow)
-                .aspectRatio(contentMode: .fit)
                 .frame(maxWidth: CGFloat(maxWidth), maxHeight: CGFloat(maxHeight))
                 .border(.red)
 

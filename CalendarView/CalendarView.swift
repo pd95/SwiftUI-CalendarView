@@ -21,11 +21,15 @@ struct CalendarView: UIViewRepresentable {
 
     private let relevantComponentsForVisibleDate = Set<Calendar.Component>([.calendar, .era, .year, .month])
 
-    func makeUIView(context: Context) -> UIView {
+    func makeUIView(context: Context) -> UICalendarView {
         let calendarView = UICalendarView(frame: .zero)
         calendarView.calendar = calendar
         calendarView.locale = locale
         calendarView.fontDesign = fontDesign
+
+        // Make sure our calendar view adapts nicely to size constraints.
+        calendarView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        calendarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         if let initiallyVisibleDate {
             let dateComponents = calendar.dateComponents(relevantComponentsForVisibleDate, from: initiallyVisibleDate)
@@ -44,23 +48,10 @@ struct CalendarView: UIViewRepresentable {
             calendarView.delegate = context.coordinator
         }
 
-        let rootView = UIView()
-        rootView.addSubview(calendarView)
-
-        // adding constraints to profileImageView
-        calendarView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-          calendarView.leadingAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.leadingAnchor, constant: 0),
-          calendarView.trailingAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.trailingAnchor, constant: 0),
-          calendarView.topAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.topAnchor, constant: 0),
-          calendarView.bottomAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.bottomAnchor, constant: 0),
-        ])
-
-        return rootView
+        return calendarView
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        guard let calendarView = uiView.subviews.first as? UICalendarView else { return }
+    func updateUIView(_ calendarView: UICalendarView, context: Context) {
 
         if let availableDateRange {
             // Ensure visibleDate is within the date range
