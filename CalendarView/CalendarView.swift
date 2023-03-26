@@ -11,10 +11,11 @@ struct CalendarView: UIViewRepresentable {
     @Environment(\.calendar) private var calendar
     @Environment(\.locale) private var locale
 
-    var visibleDate: Date? = nil
+    var initiallyVisibleDate: Date? = nil
     var availableDateRange: ClosedRange<Date>? = nil
     var fontDesign: UIFontDescriptor.SystemDesign = .default
 
+    var visibleDateChanged: ((Date) -> Void)?
     var canSelectDate: ((Date) -> Bool)?
     var selectDate: ((Date?) -> Void)?
 
@@ -26,8 +27,8 @@ struct CalendarView: UIViewRepresentable {
         calendarView.locale = locale
         calendarView.fontDesign = fontDesign
 
-        if let visibleDate {
-            let dateComponents = calendar.dateComponents(relevantComponentsForVisibleDate, from: visibleDate)
+        if let initiallyVisibleDate {
+            let dateComponents = calendar.dateComponents(relevantComponentsForVisibleDate, from: initiallyVisibleDate)
             calendarView.visibleDateComponents = dateComponents
         }
         if let availableDateRange {
@@ -37,6 +38,10 @@ struct CalendarView: UIViewRepresentable {
 
         if selectDate != nil {
             calendarView.selectionBehavior = UICalendarSelectionSingleDate(delegate: context.coordinator)
+        }
+
+        if visibleDateChanged != nil {
+            calendarView.delegate = context.coordinator
         }
 
         let rootView = UIView()
@@ -88,11 +93,20 @@ struct CalendarView: UIViewRepresentable {
         return Coordinator(self)
     }
 
-    class Coordinator: NSObject, UICalendarSelectionSingleDateDelegate {
+    class Coordinator: NSObject, UICalendarSelectionSingleDateDelegate, UICalendarViewDelegate {
         let parent: CalendarView
 
         init(_ parent: CalendarView) {
             self.parent = parent
+        }
+
+        func calendarView(_ calendarView: UICalendarView, didChangeVisibleDateComponentsFrom previousDateComponents: DateComponents) {
+            guard let visibleDateChanged = parent.visibleDateChanged,
+                  let visibleDate = parent.calendar.date(from: calendarView.visibleDateComponents)
+            else {
+                return
+            }
+            return visibleDateChanged(visibleDate)
         }
 
         func dateSelection(_ selection: UICalendarSelectionSingleDate, canSelectDate dateComponents: DateComponents?) -> Bool {

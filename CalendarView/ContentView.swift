@@ -15,7 +15,7 @@ struct ContentView: View {
     // State variables used to test the `CalendarView` configuration
     @State private var minDate = Date.distantPast
     @State private var maxDate = Date.distantFuture
-    @State private var initiallyVisibleDate: Date = .now
+    @State private var currentVisibleMonth: Date?
     @State private var selectedDate: Date?
     @State private var locale: Locale = .current
     @State private var allowedWeekDays: [DateComponents] = (2...6).map({ DateComponents(weekday: $0) })
@@ -25,6 +25,11 @@ struct ContentView: View {
     @SceneStorage("maxHeight") private var maxHeight: Int = 320
     @SceneStorage("fontDesign") private var fontDesign: UIFontDescriptor.SystemDesign = .default
 
+    var initialVisibleMonth: Date {
+        let monthComponents = calendar.dateComponents([.year, .month], from: .now)
+        return calendar.date(from: monthComponents)!
+    }
+
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
 
@@ -32,9 +37,12 @@ struct ContentView: View {
             // going to layout its content.
             ScrollView(.vertical) {
                 CalendarView(
-                    visibleDate: initiallyVisibleDate,
+                    initiallyVisibleDate: initialVisibleMonth,
                     availableDateRange: minDate...maxDate,
                     fontDesign: fontDesign,
+                    visibleDateChanged: { newDate in
+                        currentVisibleMonth = newDate
+                    },
                     canSelectDate: { date in
                         // Get weekday from date and check against allowed weekdays
                         let dateComponents = calendar.dateComponents([.weekday], from: date)
@@ -42,7 +50,6 @@ struct ContentView: View {
                     },
                     selectDate: {
                         selectedDate = $0
-                        initiallyVisibleDate = selectedDate ?? initiallyVisibleDate
                     }
                 )
                 .environment(\.locale, locale)
@@ -54,6 +61,9 @@ struct ContentView: View {
                 Text(selectedDate == nil ? "Please select a date." : "\(selectedDate!, style: .date) selected")
                     .font(.title3.bold())
                     .padding()
+
+                Text("Current month: \(currentVisibleMonth ?? initialVisibleMonth, style: .date)")
+                    .font(.headline)
 
                 Button(action: { showConfigurationSheet.toggle() }) {
                     Label("Configuration", systemImage: "gear")
@@ -85,7 +95,7 @@ struct ContentView: View {
                                             .contentShape(Rectangle())
                                             .onTapGesture {
                                                 if minDate == .distantPast {
-                                                    minDate = calendar.date(byAdding: .month, value: -2, to: .now) ?? initiallyVisibleDate
+                                                    minDate = calendar.date(byAdding: .month, value: -2, to: .now) ?? initialVisibleMonth
                                                 }
                                             }
                                     }
@@ -98,7 +108,7 @@ struct ContentView: View {
                                             .contentShape(Rectangle())
                                             .onTapGesture {
                                                 if maxDate == .distantFuture {
-                                                    maxDate = calendar.date(byAdding: .month, value: 2, to: .now) ?? initiallyVisibleDate
+                                                    maxDate = calendar.date(byAdding: .month, value: 2, to: .now) ?? initialVisibleMonth
                                                 }
                                             }
                                     }
