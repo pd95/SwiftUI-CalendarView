@@ -42,6 +42,7 @@ struct ContentView: View {
                     },
                     selectDate: {
                         selectedDate = $0
+                        date = selectedDate ?? date
                     }
                 )
                 .environment(\.locale, locale)
