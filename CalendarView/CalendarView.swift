@@ -55,11 +55,9 @@ struct CalendarView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: Context) {
         guard let calendarView = uiView.subviews.first as? UICalendarView else { return }
 
-        let currentVisibleDate = calendarView.calendar.date(from: calendarView.visibleDateComponents)
-
         if let availableDateRange {
             // Ensure visibleDate is within the date range
-            if let currentVisibleDate {
+            if let currentVisibleDate = calendarView.visibleDateComponents.date {
                 if !availableDateRange.contains(currentVisibleDate) {
                     let nearestBoundary = max(availableDateRange.lowerBound, min(availableDateRange.upperBound, currentVisibleDate))
                     print("🟡 Adjusting visible date to", nearestBoundary)
@@ -67,12 +65,16 @@ struct CalendarView: UIViewRepresentable {
                 }
             }
             let dateInterval = DateInterval(start: availableDateRange.lowerBound, end: availableDateRange.upperBound)
-            calendarView.availableDateRange = dateInterval
+            if dateInterval != calendarView.availableDateRange {
+                calendarView.availableDateRange = dateInterval
+            }
         }
 
         if let visibleDate, calendarView.availableDateRange.contains(visibleDate) {
-            let dateComponents = calendar.dateComponents([.year, .month, .day], from: visibleDate)
-            calendarView.visibleDateComponents = dateComponents
+            let dateComponents = calendar.dateComponents([.calendar, .era, .year, .month], from: visibleDate)
+            if dateComponents != calendarView.visibleDateComponents {
+                calendarView.visibleDateComponents = dateComponents
+            }
         }
 
         if calendarView.locale != locale {
