@@ -76,13 +76,6 @@ struct CalendarView: UIViewRepresentable {
             }
         }
 
-        if let visibleDate, calendarView.availableDateRange.contains(visibleDate) {
-            let dateComponents = calendar.dateComponents(relevantComponentsForVisibleDate, from: visibleDate)
-            if dateComponents != calendarView.visibleDateComponents {
-                calendarView.visibleDateComponents = dateComponents
-            }
-        }
-
         if calendarView.locale != locale {
             calendarView.locale = locale
         }

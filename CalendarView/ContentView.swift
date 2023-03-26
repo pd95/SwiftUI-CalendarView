@@ -15,7 +15,7 @@ struct ContentView: View {
     // State variables used to test the `CalendarView` configuration
     @State private var minDate = Date.distantPast
     @State private var maxDate = Date.distantFuture
-    @State private var date: Date = .now
+    @State private var initiallyVisibleDate: Date = .now
     @State private var selectedDate: Date?
     @State private var locale: Locale = .current
     @State private var allowedWeekDays: [DateComponents] = (2...6).map({ DateComponents(weekday: $0) })
@@ -32,7 +32,7 @@ struct ContentView: View {
             // going to layout its content.
             ScrollView(.vertical) {
                 CalendarView(
-                    visibleDate: date,
+                    visibleDate: initiallyVisibleDate,
                     availableDateRange: minDate...maxDate,
                     fontDesign: fontDesign,
                     canSelectDate: { date in
@@ -42,7 +42,7 @@ struct ContentView: View {
                     },
                     selectDate: {
                         selectedDate = $0
-                        date = selectedDate ?? date
+                        initiallyVisibleDate = selectedDate ?? initiallyVisibleDate
                     }
                 )
                 .environment(\.locale, locale)
@@ -77,23 +77,6 @@ struct ContentView: View {
                         // ---------------------------------------------------------------
                         // The following section allows adjusting the "Content" related behaviour of the `CalendarView`
                         Section {
-                            LabeledContent("Visible month") {
-                                Button(action: {
-                                    date = calendar.date(byAdding: .month, value: -1, to: date) ?? date
-                                }, label: {
-                                    Label("Previous", systemImage: "chevron.backward.2")
-                                })
-                                Button("Today") {
-                                    date = .now
-                                }
-                                Button(action: {
-                                    date = calendar.date(byAdding: .month, value: 1, to: date) ?? date
-                                }, label: {
-                                    Label("Next", systemImage: "chevron.forward.2")
-                                })
-                            }
-                            .labelStyle(.iconOnly)
-
                             DatePicker("Min. date", selection: $minDate, in: Date.distantPast...maxDate, displayedComponents: .date)
                                 .disabled(minDate == .distantPast)
                                 .overlay(content: {
@@ -102,7 +85,7 @@ struct ContentView: View {
                                             .contentShape(Rectangle())
                                             .onTapGesture {
                                                 if minDate == .distantPast {
-                                                    minDate = calendar.date(byAdding: .month, value: -2, to: .now) ?? date
+                                                    minDate = calendar.date(byAdding: .month, value: -2, to: .now) ?? initiallyVisibleDate
                                                 }
                                             }
                                     }
@@ -115,7 +98,7 @@ struct ContentView: View {
                                             .contentShape(Rectangle())
                                             .onTapGesture {
                                                 if maxDate == .distantFuture {
-                                                    maxDate = calendar.date(byAdding: .month, value: 2, to: .now) ?? date
+                                                    maxDate = calendar.date(byAdding: .month, value: 2, to: .now) ?? initiallyVisibleDate
                                                 }
                                             }
                                     }
