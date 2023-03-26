@@ -18,6 +18,8 @@ struct CalendarView: UIViewRepresentable {
     var canSelectDate: ((Date) -> Bool)?
     var selectDate: ((Date?) -> Void)?
 
+    private let relevantComponentsForVisibleDate = Set<Calendar.Component>([.calendar, .era, .year, .month])
+
     func makeUIView(context: Context) -> UIView {
         let calendarView = UICalendarView(frame: .zero)
         calendarView.calendar = calendar
@@ -25,7 +27,7 @@ struct CalendarView: UIViewRepresentable {
         calendarView.fontDesign = fontDesign
 
         if let visibleDate {
-            let dateComponents = calendar.dateComponents([.year, .month, .day], from: visibleDate)
+            let dateComponents = calendar.dateComponents(relevantComponentsForVisibleDate, from: visibleDate)
             calendarView.visibleDateComponents = dateComponents
         }
         if let availableDateRange {
@@ -60,8 +62,12 @@ struct CalendarView: UIViewRepresentable {
             if let currentVisibleDate = calendarView.visibleDateComponents.date {
                 if !availableDateRange.contains(currentVisibleDate) {
                     let nearestBoundary = max(availableDateRange.lowerBound, min(availableDateRange.upperBound, currentVisibleDate))
-                    print("🟡 Adjusting visible date to", nearestBoundary)
-                    calendarView.visibleDateComponents = calendarView.calendar.dateComponents([.year, .month, .day], from: nearestBoundary)
+
+                    let nearestBoundaryDateComponents = calendarView.calendar.dateComponents(relevantComponentsForVisibleDate, from: nearestBoundary)
+                    if nearestBoundaryDateComponents != calendarView.visibleDateComponents {
+                        print("🟡 Adjusting visible date to", nearestBoundary)
+                        calendarView.visibleDateComponents = nearestBoundaryDateComponents
+                    }
                 }
             }
             let dateInterval = DateInterval(start: availableDateRange.lowerBound, end: availableDateRange.upperBound)
@@ -71,7 +77,7 @@ struct CalendarView: UIViewRepresentable {
         }
 
         if let visibleDate, calendarView.availableDateRange.contains(visibleDate) {
-            let dateComponents = calendar.dateComponents([.calendar, .era, .year, .month], from: visibleDate)
+            let dateComponents = calendar.dateComponents(relevantComponentsForVisibleDate, from: visibleDate)
             if dateComponents != calendarView.visibleDateComponents {
                 calendarView.visibleDateComponents = dateComponents
             }
