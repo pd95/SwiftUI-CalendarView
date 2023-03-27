@@ -181,8 +181,10 @@ struct ContentView: View {
                                         .labelsHidden()
                                     Stepper("Width", onIncrement: { maxWidth += 5 }, onDecrement: { maxWidth -= 5 })
                                         .labelsHidden()
+                                        .disabled(!limitWidth)
                                     TextField("Max. Width", value: $maxWidth, format: .number)
                                         .frame(maxWidth: 65)
+                                        .disabled(!limitWidth)
                                 }
                             }
                             HStack(spacing: 10) {
@@ -191,8 +193,10 @@ struct ContentView: View {
                                         .labelsHidden()
                                     Stepper("Height", onIncrement: { maxHeight += 5 }, onDecrement: { maxHeight -= 5 })
                                         .labelsHidden()
+                                        .disabled(!limitHeight)
                                     TextField("Max Height", value: $maxHeight, format: .number)
                                         .frame(maxWidth: 65)
+                                        .disabled(!limitHeight)
                                 }
                             }
                         }
