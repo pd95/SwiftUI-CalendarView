@@ -21,7 +21,9 @@ struct ContentView: View {
     @State private var allowedWeekDays: [DateComponents] = (2...6).map({ DateComponents(weekday: $0) })
 
     // State variables used to test the `CalendarView` layout behaviour
+    @SceneStorage("limitWidth") private var limitWidth: Bool = true
     @SceneStorage("maxWidth") private var maxWidth: Int = 300
+    @SceneStorage("limitHeight") private var limitHeight: Bool = false
     @SceneStorage("maxHeight") private var maxHeight: Int = 380
     @SceneStorage("fontDesign") private var fontDesign: UIFontDescriptor.SystemDesign = .default
 
@@ -68,7 +70,7 @@ struct ContentView: View {
                 )
                 .environment(\.locale, locale)
                 .border(.yellow)
-                .frame(maxWidth: CGFloat(maxWidth), maxHeight: CGFloat(maxHeight))
+                .frame(maxWidth: limitWidth ? CGFloat(maxWidth): nil, maxHeight: limitHeight ? CGFloat(maxHeight) : nil)
                 .border(.red)
 
                 Text(selectedDate == nil ? "Please select a date." : "\(selectedDate!, style: .date) selected")
@@ -174,22 +176,24 @@ struct ContentView: View {
                             }
 
                             HStack(spacing: 10) {
-                                Stepper("Width") {
-                                    maxWidth += 5
-                                } onDecrement: {
-                                    maxWidth -= 5
+                                LabeledContent("Width") {
+                                    Toggle("Width", isOn: $limitWidth)
+                                        .labelsHidden()
+                                    Stepper("Width", onIncrement: { maxWidth += 5 }, onDecrement: { maxWidth -= 5 })
+                                        .labelsHidden()
+                                    TextField("Max. Width", value: $maxWidth, format: .number)
+                                        .frame(maxWidth: 65)
                                 }
-                                TextField("Max. Width", value: $maxWidth, format: .number)
-                                    .frame(maxWidth: 65)
                             }
                             HStack(spacing: 10) {
-                                Stepper("Height") {
-                                    maxHeight += 5
-                                } onDecrement: {
-                                    maxHeight -= 5
+                                LabeledContent("Height") {
+                                    Toggle("Height", isOn: $limitHeight)
+                                        .labelsHidden()
+                                    Stepper("Height", onIncrement: { maxHeight += 5 }, onDecrement: { maxHeight -= 5 })
+                                        .labelsHidden()
+                                    TextField("Max Height", value: $maxHeight, format: .number)
+                                        .frame(maxWidth: 65)
                                 }
-                                TextField("Max Height", value: $maxHeight, format: .number)
-                                    .frame(maxWidth: 65)
                             }
                         }
                     }
