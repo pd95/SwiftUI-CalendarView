@@ -21,8 +21,8 @@ struct ContentView: View {
     @State private var allowedWeekDays: [DateComponents] = (2...6).map({ DateComponents(weekday: $0) })
 
     // State variables used to test the `CalendarView` layout behaviour
-    @SceneStorage("maxWidth") private var maxWidth: Int = 350
-    @SceneStorage("maxHeight") private var maxHeight: Int = 320
+    @SceneStorage("maxWidth") private var maxWidth: Int = 300
+    @SceneStorage("maxHeight") private var maxHeight: Int = 380
     @SceneStorage("fontDesign") private var fontDesign: UIFontDescriptor.SystemDesign = .default
 
     var initialVisibleMonth: Date {
