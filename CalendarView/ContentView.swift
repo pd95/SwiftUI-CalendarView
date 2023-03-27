@@ -50,6 +50,20 @@ struct ContentView: View {
                     },
                     selectDate: {
                         selectedDate = $0
+                    },
+                    decorationView: { date in
+                        let components = calendar.dateComponents([.day, .month, .year, .weekOfYear, .weekday], from: date)
+
+                        // Holiday weeks
+                        if [1, 7, 8, 17, 18, 29, 30, 31, 32, 33, 41, 42, 52].contains(components.weekOfYear) {
+                            return .default(color: .orange, size: .small)
+                        }
+
+                        // planned Wednesdays
+                        if components.weekday == 4 {
+                            return .default(color: .red, size: .large)
+                        }
+                        return nil
                     }
                 )
                 .environment(\.locale, locale)

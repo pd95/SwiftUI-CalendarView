@@ -18,6 +18,7 @@ struct CalendarView: UIViewRepresentable {
     var visibleDateChanged: ((Date) -> Void)?
     var canSelectDate: ((Date) -> Bool)?
     var selectDate: ((Date?) -> Void)?
+    var decorationView: ((Date) -> UICalendarView.Decoration?)?
 
     private let relevantComponentsForVisibleDate = Set<Calendar.Component>([.calendar, .era, .year, .month])
 
@@ -44,7 +45,7 @@ struct CalendarView: UIViewRepresentable {
             calendarView.selectionBehavior = UICalendarSelectionSingleDate(delegate: context.coordinator)
         }
 
-        if visibleDateChanged != nil {
+        if visibleDateChanged != nil || decorationView != nil{
             calendarView.delegate = context.coordinator
         }
 
@@ -81,6 +82,9 @@ struct CalendarView: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
+        if decorationView != nil {
+            return DecoratedCoordinator(self)
+        }
         return Coordinator(self)
     }
 
@@ -115,6 +119,18 @@ struct CalendarView: UIViewRepresentable {
             } else {
                 selectDate(nil)
             }
+        }
+    }
+
+    class DecoratedCoordinator: Coordinator {
+        func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
+            guard let decorationView = parent.decorationView,
+                  let date = parent.calendar.date(from: dateComponents)
+            else {
+                return nil
+            }
+
+            return decorationView(date)
         }
     }
 }
