@@ -26,10 +26,29 @@ struct ContentView: View {
     @SceneStorage("limitHeight") private var limitHeight: Bool = false
     @SceneStorage("maxHeight") private var maxHeight: Int = 380
     @SceneStorage("fontDesign") private var fontDesign: UIFontDescriptor.SystemDesign = .default
+    @SceneStorage("withDecorations") private var withDecorations = false
+
+    // ID of CalendarView: change if a new view must be created (e.g. withDecorations changes)
+    @State private var calendarViewID = 0
 
     var initialVisibleMonth: Date {
         let monthComponents = calendar.dateComponents([.year, .month], from: .now)
         return calendar.date(from: monthComponents)!
+    }
+
+    private func decorationView(for date: Date) -> UICalendarView.Decoration? {
+        let components = calendar.dateComponents([.day, .month, .year, .weekOfYear, .weekday], from: date)
+
+        // Holiday weeks
+        if [1, 7, 8, 17, 18, 29, 30, 31, 32, 33, 41, 42, 52].contains(components.weekOfYear) {
+            return .default(color: .orange, size: .small)
+        }
+
+        // planned Wednesdays
+        if components.weekday == 4 {
+            return .default(color: .red, size: .large)
+        }
+        return nil
     }
 
     var body: some View {
@@ -53,21 +72,9 @@ struct ContentView: View {
                     selectDate: {
                         selectedDate = $0
                     },
-                    decorationView: { date in
-                        let components = calendar.dateComponents([.day, .month, .year, .weekOfYear, .weekday], from: date)
-
-                        // Holiday weeks
-                        if [1, 7, 8, 17, 18, 29, 30, 31, 32, 33, 41, 42, 52].contains(components.weekOfYear) {
-                            return .default(color: .orange, size: .small)
-                        }
-
-                        // planned Wednesdays
-                        if components.weekday == 4 {
-                            return .default(color: .red, size: .large)
-                        }
-                        return nil
-                    }
+                    decorationView: withDecorations ? decorationView : nil
                 )
+                .id(calendarViewID)   // when decoration is enabled/disabled a new view must be created
                 .environment(\.locale, locale)
                 .border(.yellow)
                 .frame(maxWidth: limitWidth ? CGFloat(maxWidth): nil, maxHeight: limitHeight ? CGFloat(maxHeight) : nil)
@@ -174,6 +181,11 @@ struct ContentView: View {
                                 }
                                 .buttonStyle(.borderless)
                             }
+
+                            Toggle("Decoration", isOn: $withDecorations)
+                                .onChange(of: withDecorations, perform: { _ in
+                                    calendarViewID += 1
+                                })
 
                             HStack(spacing: 10) {
                                 LabeledContent("Width") {
