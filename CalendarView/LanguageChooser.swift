@@ -20,8 +20,7 @@ struct LanguageChooser<Label: View>: View {
                 Button(action: {
                     selectedLanguage = languageCode
                 }) {
-                    if let currentLanguage,
-                       currentLanguage == languageCode {
+                    if currentLanguage == languageCode {
                         Image(systemName: "checkmark")
                     }
                     Text(languageCode.identifier)
